@@ -10,4 +10,13 @@
 
 ## Supported commands
 
-- Print and line feed
+⚠️ Support is currently limited to only a subset of ESC/POS:
+
+- Raw Text
+- LF: Print and line feed
+- ESC Commands:
+  - Select font
+  - Select justification
+- GS Commands:
+  - Select character size
+  - Select cut mode and cut paper

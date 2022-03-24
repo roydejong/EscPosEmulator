@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using ReceiptPrinterEmulator.Emulator.Enums;
 using ReceiptPrinterEmulator.EscPos;
 using ReceiptPrinterEmulator.Logging;
 
@@ -54,11 +55,12 @@ public class ReceiptPrinter
     #region Direct API
     public void PrintText(string text)
     {
-        
+        Logger.Info($"Print: {text}");
     }
     
-    public void Cut()
+    public void Cut(CutFunction cutFunction = CutFunction.Cut, CutShape cutShape = CutShape.Full, int n = 0)
     {
+        Logger.Info($"Execute cut: {cutFunction}, {cutShape}, {n}");
         StartNewReceipt();
     }
 
@@ -70,7 +72,22 @@ public class ReceiptPrinter
     /// </remarks>
     public void LineFeed()
     {
-        
+        Logger.Info($"Line feed");
+    }
+
+    public void SelectFont(PrinterFont printerFont)
+    {
+        Logger.Info($"Select font: {printerFont}");
+    }
+
+    public void SelectJustification(TextJustification justification)
+    {
+        Logger.Info($"Select justification: {justification}");
+    }
+
+    public void SelectCharacterSize(int width, int height)
+    {
+        Logger.Info($"Set character size: {width} x {height}");
     }
     #endregion
 
