@@ -32,9 +32,6 @@ public class NetClient
         if (!_lifetimeCts.IsCancellationRequested)
             _lifetimeCts.Cancel();
         
-        if (!IsConnected)
-            return;
-        
         _socket.Shutdown(SocketShutdown.Both);
         _socket.Close();
         
@@ -43,22 +40,30 @@ public class NetClient
 
     public async Task ReceiveLoopAsync()
     {
-        var receiveBuffer = GC.AllocateArray<byte>(1024, true);
-        var bufferMemory = receiveBuffer.AsMemory();
-
-        while (!_lifetimeCts.Token.IsCancellationRequested)
+        try
         {
-            var byteCount = await _socket.ReceiveAsync(bufferMemory, SocketFlags.None);
+            var receiveBuffer = GC.AllocateArray<byte>(1024, true);
+            var bufferMemory = receiveBuffer.AsMemory();
 
-            if (byteCount <= 0)
+            while (!_lifetimeCts.Token.IsCancellationRequested)
             {
-                Close();
-                return;
+                var byteCount = await _socket.ReceiveAsync(bufferMemory, SocketFlags.None);
+
+                if (byteCount <= 0)
+                {
+                    Close();
+                    return;
+                }
+
+                Logger.Info($"Received TCP data (byteCount={byteCount}, RemoteEndPoint={RemoteEndPoint})");
+
+                HandleIncomingData(bufferMemory.Span[..byteCount]);
             }
-
-            Logger.Info($"Received TCP data (byteCount={byteCount}, RemoteEndPoint={RemoteEndPoint})");
-
-            HandleIncomingData(bufferMemory.Span[..byteCount]);
+        }
+        catch (Exception ex)
+        {
+            Logger.Exception(ex, "Receive error");
+            Close();
         }
     }
 

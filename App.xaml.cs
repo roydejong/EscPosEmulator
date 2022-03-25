@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using ReceiptPrinterEmulator.Emulator;
 using ReceiptPrinterEmulator.Networking;
 
@@ -17,13 +15,6 @@ namespace ReceiptPrinterEmulator
 
             Server = new NetServer(1234);
             _ = Server.Run();
-
-            if (File.Exists("last_escpos_receive.txt"))
-            {
-                Printer.FeedEscPos(File.ReadAllText("last_escpos_receive.txt", Encoding.ASCII));
-                Printer.FeedEscPos(File.ReadAllText("last_escpos_receive.txt", Encoding.ASCII));
-                Printer.FeedEscPos(File.ReadAllText("last_escpos_receive.txt", Encoding.ASCII));
-            }
         }
 
         private void App_OnExit(object sender, ExitEventArgs e)

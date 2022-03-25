@@ -1,10 +1,14 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ReceiptPrinterEmulator.Emulator;
+using ReceiptPrinterEmulator.Logging;
+using ReceiptPrinterEmulator.Utils;
 using Image = System.Windows.Controls.Image;
 
 namespace ReceiptPrinterEmulator
@@ -21,25 +25,59 @@ namespace ReceiptPrinterEmulator
 
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
-            App.Printer!.OnActivityEvent += (o, args) => RefreshUI(); 
+            App.Printer!.OnActivityEvent += (o, args) =>
+            {
+                RefreshUI();
+                WindowsUtils.FlashWindow(this);
+                WindowsUtils.ExclaimSoft();
+            }; 
             
             RefreshUI();
         }
 
+        private void ResetButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            Logger.Info("Resetting");
+            
+            App.Printer!.ReceiptStack.Clear();
+            App.Printer.Initialize();
+            App.Printer.StartNewReceipt();
+
+            var toRemove = new List<Image>();
+            foreach (var childControl in ReceiptImageRoot.Children)
+                if (childControl is Image imgControl)
+                    toRemove.Add(imgControl);
+            toRemove.ForEach(img => ReceiptImageRoot.Children.Remove(img));
+
+            RefreshUI();
+        }
+
+        private void TestButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!File.Exists("test_receipt.txt"))
+                return;
+            
+            App.Printer?.FeedEscPos(File.ReadAllText("test_receipt.txt", Encoding.ASCII));
+        }
+
         private void RefreshUI()
         {
-            Address.Text = $"Listening on TCP/IP ({App.Server!.EndPoint})";
+            // Status label
+            Address.Text = $"{App.Server!.EndPoint}";
             Address.Foreground = new SolidColorBrush(App.Server!.IsRunning ? Colors.SpringGreen : Colors.Crimson);
 
             // Receipt images
-            CreateOrUpdateReceiptControl(ReceiptImageRoot, App.Printer!.CurrentReceipt);
-            
-            foreach (var receipt in App.Printer.ReceiptStack)
+            foreach (var receipt in App.Printer!.ReceiptStack)
                 CreateOrUpdateReceiptControl(ReceiptImageRoot, receipt);
+            
+            MainScrollView.ScrollToBottom();
         }
 
         private void CreateOrUpdateReceiptControl(Panel parentControl, Receipt receipt)
         {
+            if (receipt.IsEmpty)
+                return;
+            
             var guidName = "R" + receipt.Guid.Replace("-", "");
             
             Image? ourControl = null;
@@ -61,7 +99,7 @@ namespace ReceiptPrinterEmulator
                 ourControl = new Image();
                 ourControl.Name = guidName;
                 ourControl.Stretch = Stretch.None;
-                ourControl.Margin = new Thickness(0, 20, 0, 0);
+                ourControl.Margin = new Thickness(0, 0, 0, 10);
                 
                 parentControl.Children.Add(ourControl);
             }

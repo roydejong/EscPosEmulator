@@ -43,8 +43,12 @@ public class EscPosInterpreter
     {
         // ESC
         RegisterCommand(new InitializePrinterCommand());
+        RegisterCommand(new ItalicOffCommand());
+        RegisterCommand(new ItalicOnCommand());
         RegisterCommand(new SelectFontCommand());
         RegisterCommand(new SelectJustificationCommand());
+        RegisterCommand(new ToggleEmphasizeCommand());
+        RegisterCommand(new ToggleUnderlineCommand());
         
         // GS
         RegisterCommand(new SelectCharacterSizeCommand());
@@ -165,7 +169,7 @@ public class EscPosInterpreter
                 throw new NotImplementedException("Not implemented: Horizontal tab");
             }
 
-            if (currentChar == LF)
+            if (currentChar == LF || currentChar == CR)
             {
                 // Print and line feed
                 _printer.PrintAndLineFeed(FinalizePrintBuffer());
@@ -176,12 +180,6 @@ public class EscPosInterpreter
             {
                 // Print and return to Standard mode (in Page mode)
                 throw new NotImplementedException("Not supported: page mode");
-            }
-
-            if (currentChar == CR)
-            {
-                // Print and carriage return
-                throw new NotImplementedException("Not implemented: Print and carriage return");
             }
 
             if (currentChar == DLE)
@@ -203,6 +201,12 @@ public class EscPosInterpreter
 
                 _commandBuffer.Clear();
                 _commandBuffer.Append(currentChar);
+                continue;
+            }
+
+            if (currentChar == NUL)
+            {
+                // Null byte outside of command context; do nothing
                 continue;
             }
 

@@ -11,4 +11,10 @@
       <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="test_receipt.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

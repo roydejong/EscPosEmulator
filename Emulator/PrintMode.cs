@@ -8,6 +8,9 @@ public class PrintMode
     public int CharWidthScale;
     public int CharHeightScale;
     public TextJustification Justification;
+    public bool Emphasize;
+    public bool Italic;
+    public UnderlineMode Underline;
 
     public PrintMode()
     {

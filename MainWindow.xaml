@@ -5,17 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="ESC/POS Receipt Printer Emulator"
-        Height="850" Width="665" MinWidth="665"
+        Height="800" Width="730" MinWidth="730"
         Background="#262626"
         Loaded="MainWindow_OnLoaded"
         >
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible">
-        <StackPanel Name="ReceiptImageRoot">
-            <Grid Background="#3b3b3b">
-                <Grid Margin="15">
-                    <TextBlock Text="!Status!" Foreground="White" Name="Address" FontWeight="Bold"/>
-                </Grid>
-            </Grid>
-        </StackPanel>
-    </ScrollViewer>
+    <DockPanel >
+        <Grid Background="#3b3b3b">
+            <StackPanel Margin="15 10" VerticalAlignment="Center">
+                <TextBlock Text="!Status!" Foreground="White" Name="Address" FontWeight="Bold" Margin="0 0 0 10"/>
+                <Button Name="ResetButton" Click="ResetButton_OnClick" Padding="5 3" Margin="0 0 0 10">Reset</Button>    
+                <Button Name="TestButton" Click="TestButton_OnClick" Padding="5 3" Margin="0 0 0 10">Test print</Button>    
+            </StackPanel>
+        </Grid>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" Name="MainScrollView">
+            <StackPanel Name="ReceiptImageRoot" Margin="0 10 0 0" />
+        </ScrollViewer>
+    </DockPanel>
 </Window>

@@ -20,6 +20,8 @@ public class Receipt
     private List<IReceiptPrintable> _renderLines;
     private ReceiptLine? _currentTextLine;
 
+    public bool IsEmpty => (_currentTextLine == null || _currentTextLine.IsEmpty) && _renderLines.Count == 0;
+
     public Receipt(PaperConfiguration paperConfiguration, PrintMode printMode)
     {
         Guid = System.Guid.NewGuid().ToString();
@@ -62,16 +64,24 @@ public class Receipt
         }
     }
 
-    public void FinalizeTextLine()
+    public void FinalizeTextLine(bool forceNewLine = false)
     {
         if (_currentTextLine == null || _currentTextLine.IsEmpty)
+        {
+            if (forceNewLine)
+            {
+                _currentTextLine = CreateNewTextLine();
+                _currentTextLine.TryWriteChar(' ');
+                FinalizeTextLine(false);
+            }
             return;
-        
+        }
+
         _renderLines.Add(_currentTextLine);
         _currentTextLine = null;
     }
 
-    public void AdvanceToNewLine() => FinalizeTextLine();
+    public void AdvanceToNewLine() => FinalizeTextLine(true);
 
     public int GetTotalPrintHeight()
         => _renderLines.Sum(line => line.GetPrintHeight());

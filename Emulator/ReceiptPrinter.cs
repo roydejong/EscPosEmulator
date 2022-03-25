@@ -56,12 +56,12 @@ public class ReceiptPrinter
 
     #region Receipt meta
 
-    private void StartNewReceipt()
+    public void StartNewReceipt()
     {
         CurrentReceipt = new(_paperConfiguration, _printMode);
         ReceiptStack.Add(CurrentReceipt);
         
-        Logger.Info($"Starting new receipt (now have {ReceiptStack.Count} receipts on the stack)");
+        Logger.Info($"Starting new receipt (#{ReceiptStack.Count})");
     }
 
     #endregion
@@ -82,6 +82,9 @@ public class ReceiptPrinter
         SelectFont(PrinterFont.FontA);
         SelectJustification(TextJustification.Left);
         SelectCharacterSize(1, 1);
+        SelectEmphasizeMode(false);
+        SelectItalicMode(false);
+        SelectUnderlineMode(UnderlineMode.Off);
     }
 
     public void PrintText(string text)
@@ -136,6 +139,30 @@ public class ReceiptPrinter
 
         _printMode.CharWidthScale = width;
         _printMode.CharHeightScale = height;
+        CurrentReceipt.ChangeFontConfiguration(_printMode);
+    }
+
+    public void SelectEmphasizeMode(bool enable)
+    {
+        Logger.Info($"Set emphasize mode: {enable}");
+
+        _printMode.Emphasize = enable;
+        CurrentReceipt.ChangeFontConfiguration(_printMode);
+    }
+
+    public void SelectItalicMode(bool enable)
+    {
+        Logger.Info($"Set italic mode: {enable}");
+
+        _printMode.Italic = enable;
+        CurrentReceipt.ChangeFontConfiguration(_printMode);
+    }
+
+    public void SelectUnderlineMode(UnderlineMode mode)
+    {
+        Logger.Info($"Set underline mode: {mode}");
+
+        _printMode.Underline = mode;
         CurrentReceipt.ChangeFontConfiguration(_printMode);
     }
 

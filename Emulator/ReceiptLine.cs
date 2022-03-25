@@ -11,6 +11,9 @@ public class ReceiptLine : IReceiptPrintable
     private readonly int _charWidth;
     private readonly int _charHeight;
     private readonly TextJustification _justification;
+    private readonly bool _bold;
+    private readonly bool _italic;
+    private readonly UnderlineMode _underline;
 
     private string _text;
     private int _totalWidth;
@@ -24,6 +27,9 @@ public class ReceiptLine : IReceiptPrintable
         _charWidth = _font.CharacterWidth * printMode.CharWidthScale;
         _charHeight = _font.CharacterHeight * printMode.CharHeightScale;
         _justification = printMode.Justification;
+        _bold = printMode.Emphasize;
+        _italic = printMode.Italic;
+        _underline = printMode.Underline;
 
         _text = "";
         _totalWidth = 0;
@@ -46,7 +52,11 @@ public class ReceiptLine : IReceiptPrintable
     
     public void Render(Bitmap bitmap, Graphics g, int offsetX, int offsetY)
     {
-        var font = new Font(_font.RenderFont, _charWidth);
+        var fontStyle = FontStyle.Regular;
+        if (_bold) fontStyle |= FontStyle.Bold;
+        if (_italic) fontStyle |= FontStyle.Italic;
+        
+        var font = new Font(_font.RenderFont, _charWidth, fontStyle);
         
         for (var i = 0; i < _text.Length; i++)
         {
@@ -69,6 +79,12 @@ public class ReceiptLine : IReceiptPrintable
             }
             
             g.DrawString(c.ToString(), font, Brushes.Black, rect);
+
+            if (_underline is UnderlineMode.OnOneDot or UnderlineMode.OnTwoDots)
+            {
+                var dotHeight = (_underline is UnderlineMode.OnTwoDots ? 2 : 1);
+                g.DrawLine(new Pen(Color.Black, dotHeight), rect.Left, rect.Bottom, rect.Right, rect.Bottom);
+            }
         }
     }
 }
