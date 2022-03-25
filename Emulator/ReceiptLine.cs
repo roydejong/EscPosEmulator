@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using ReceiptPrinterEmulator.Emulator.Abstraction;
+using ReceiptPrinterEmulator.Emulator.Enums;
 
 namespace ReceiptPrinterEmulator.Emulator;
 
@@ -9,6 +10,7 @@ public class ReceiptLine : IReceiptPrintable
     private readonly int _printWidth;
     private readonly int _charWidth;
     private readonly int _charHeight;
+    private readonly TextJustification _justification;
 
     private string _text;
     private int _totalWidth;
@@ -21,6 +23,7 @@ public class ReceiptLine : IReceiptPrintable
         _printWidth = paperConfiguration.GetPrintWidthInPixels();
         _charWidth = _font.CharacterWidth * printMode.CharWidthScale;
         _charHeight = _font.CharacterHeight * printMode.CharHeightScale;
+        _justification = printMode.Justification;
 
         _text = "";
         _totalWidth = 0;
@@ -55,6 +58,15 @@ public class ReceiptLine : IReceiptPrintable
                 width: _charWidth,
                 height: _charHeight
             );
+
+            if (_justification == TextJustification.Center)
+            {
+                rect.X += (_printWidth / 2) - (_totalWidth / 2);
+            }
+            else if (_justification == TextJustification.Right)
+            {
+                rect.X += (_printWidth - _totalWidth);
+            }
             
             g.DrawString(c.ToString(), font, Brushes.Black, rect);
         }
