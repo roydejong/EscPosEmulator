@@ -42,6 +42,7 @@ public class EscPosInterpreter
     private void RegisterCommands()
     {
         // ESC
+        RegisterCommand(new InitializePrinterCommand());
         RegisterCommand(new SelectFontCommand());
         RegisterCommand(new SelectJustificationCommand());
         

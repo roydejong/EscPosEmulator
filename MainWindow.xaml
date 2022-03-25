@@ -4,9 +4,21 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Receipt Printer"
-        Height="500" Width="400"
+        Title="ESC/POS Receipt Printer Emulator"
+        Height="850" Width="665" MinWidth="665"
         Background="#262626"
+        Loaded="MainWindow_OnLoaded"
         >
-    <Grid />
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible">
+        <StackPanel>
+            <Grid Background="#3b3b3b">
+                <Grid Margin="15">
+                    <TextBlock Text="!Status!" Foreground="White" Name="Address" FontWeight="Bold"/>
+                </Grid>
+            </Grid>
+            <Grid Margin="15">
+                <Image Name="ReceiptImage" Stretch="None" />
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
 </Window>

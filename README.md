@@ -6,7 +6,7 @@
 - Binds to a TCP/IP interface and listens for ESC/POS commands
 - Logs commands and visually represents the resulting receipt(s)
 
-👷 This is a work in progress. Use at your own risk. 
+👷 This is a work in progress. It's also pretty experimental. Use at your own risk and keep your expectations low. :)
 
 ## Supported commands
 
@@ -15,6 +15,7 @@
 - Raw Text
 - LF: Print and line feed
 - ESC Commands:
+  - Initialize printer 
   - Select font
   - Select justification
 - GS Commands:
