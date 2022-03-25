@@ -1,6 +1,8 @@
 ﻿# ESC/POS Receipt Printer Emulator
 🖨️ **This app emulates a networked receipt printer to test your ESC/POS commands against.**
 
+![Emulator](https://user-images.githubusercontent.com/6772638/160160456-faf28c07-72ac-43c4-907f-6258376cd483.png)
+
 ### About
 - Windows application (WPF + .NET 6)
 - Binds to a TCP/IP interface and listens for ESC/POS commands
