@@ -60,6 +60,8 @@ public class ReceiptPrinter
     {
         CurrentReceipt = new(_paperConfiguration, _printMode);
         ReceiptStack.Add(CurrentReceipt);
+        
+        Logger.Info($"Starting new receipt (now have {ReceiptStack.Count} receipts on the stack)");
     }
 
     #endregion
@@ -93,10 +95,11 @@ public class ReceiptPrinter
     {
         Logger.Info($"Execute cut: {cutFunction}, {cutShape}, {n}");
         
-        if (cutFunction is CutFunction.FeedAndCut or CutFunction.FeedAndCutAndReverse)
-            LineFeed();
+        LineFeed();
         
-        //StartNewReceipt(); // TODO Enable later
+        // TODO Support alternate cut modes
+        
+        StartNewReceipt();
     }
 
     /// <summary>

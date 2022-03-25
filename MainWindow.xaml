@@ -10,14 +10,11 @@
         Loaded="MainWindow_OnLoaded"
         >
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible">
-        <StackPanel>
+        <StackPanel Name="ReceiptImageRoot">
             <Grid Background="#3b3b3b">
                 <Grid Margin="15">
                     <TextBlock Text="!Status!" Foreground="White" Name="Address" FontWeight="Bold"/>
                 </Grid>
-            </Grid>
-            <Grid Margin="15">
-                <Image Name="ReceiptImage" Stretch="None" />
             </Grid>
         </StackPanel>
     </ScrollViewer>

@@ -10,6 +10,8 @@ public class Receipt
 {
     private readonly PaperConfiguration _paperConfiguration;
 
+    public readonly string Guid;
+    
     private int PaperWidth => _paperConfiguration.GetPaperWidthInPixels();
     private int PrintWidth => _paperConfiguration.GetPrintWidthInPixels();
     private int PaperMargins => (PaperWidth - PrintWidth) / 2;
@@ -20,6 +22,8 @@ public class Receipt
 
     public Receipt(PaperConfiguration paperConfiguration, PrintMode printMode)
     {
+        Guid = System.Guid.NewGuid().ToString();
+        
         _paperConfiguration = paperConfiguration;
 
         _printMode = printMode;

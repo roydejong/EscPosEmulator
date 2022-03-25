@@ -1,8 +1,11 @@
 ﻿using System.Drawing;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ReceiptPrinterEmulator.Emulator;
+using Image = System.Windows.Controls.Image;
 
 namespace ReceiptPrinterEmulator
 {
@@ -28,7 +31,42 @@ namespace ReceiptPrinterEmulator
             Address.Text = $"Listening on TCP/IP ({App.Server!.EndPoint})";
             Address.Foreground = new SolidColorBrush(App.Server!.IsRunning ? Colors.SpringGreen : Colors.Crimson);
 
-            ReceiptImage.Source = ConvertBitmap(App.Printer!.CurrentReceipt.Render());
+            // Receipt images
+            CreateOrUpdateReceiptControl(ReceiptImageRoot, App.Printer!.CurrentReceipt);
+            
+            foreach (var receipt in App.Printer.ReceiptStack)
+                CreateOrUpdateReceiptControl(ReceiptImageRoot, receipt);
+        }
+
+        private void CreateOrUpdateReceiptControl(Panel parentControl, Receipt receipt)
+        {
+            var guidName = "R" + receipt.Guid.Replace("-", "");
+            
+            Image? ourControl = null;
+            
+            foreach (var childControl in parentControl.Children)
+            {
+                if (childControl is Image imgControl)
+                {
+                    if (imgControl.Name == guidName)
+                    {
+                        ourControl = imgControl;
+                        break;
+                    }
+                }
+            }
+
+            if (ourControl == null)
+            {
+                ourControl = new Image();
+                ourControl.Name = guidName;
+                ourControl.Stretch = Stretch.None;
+                ourControl.Margin = new Thickness(0, 20, 0, 0);
+                
+                parentControl.Children.Add(ourControl);
+            }
+
+            ourControl.Source = ConvertBitmap(receipt.Render());
         }
         
         /// <summary>
