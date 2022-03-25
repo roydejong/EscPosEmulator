@@ -14,6 +14,7 @@ public class ReceiptPrinter
     private readonly EscPosInterpreter _escPosInterpreter;
 
     private PrintMode _printMode;
+    private int _lineSpacing;
     
     public Receipt CurrentReceipt { get; private set; }
     public List<Receipt> ReceiptStack { get; private set; }
@@ -58,7 +59,7 @@ public class ReceiptPrinter
 
     public void StartNewReceipt()
     {
-        CurrentReceipt = new(_paperConfiguration, _printMode);
+        CurrentReceipt = new(_paperConfiguration, _printMode, _lineSpacing);
         ReceiptStack.Add(CurrentReceipt);
         
         Logger.Info($"Starting new receipt (#{ReceiptStack.Count})");
@@ -85,6 +86,7 @@ public class ReceiptPrinter
         SelectEmphasizeMode(false);
         SelectItalicMode(false);
         SelectUnderlineMode(UnderlineMode.Off);
+        SetDefaultLineSpacing();
     }
 
     public void PrintText(string text)
@@ -166,6 +168,16 @@ public class ReceiptPrinter
         CurrentReceipt.ChangeFontConfiguration(_printMode);
     }
 
+    public void SetLineSpacing(int value)
+    {
+        Logger.Info($"Set line spacing: {value}");
+
+        _lineSpacing = value;
+        CurrentReceipt.SetLineSpacing(_lineSpacing);
+    }
+
+    public void SetDefaultLineSpacing() => SetLineSpacing(_paperConfiguration.DefaultLineSpacing);
+    
     #endregion
 
     #region Command API

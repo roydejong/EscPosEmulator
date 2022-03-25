@@ -19,10 +19,11 @@
 - CR: Carriage return
 - ESC Commands:
   - Initialize printer (`ESC @`)
+  - Toggle italic (`ESC 4` / `ESC 5`) *[possibly deprecated?]*
   - Select font (`ESC M`)
   - Select justification (`ESC a`)
+  - Select line spacing (`ESC 2` / `ESC 3`)
   - Toggle emphasis (`ESC E`)
-  - Toggle italic (`ESC 4` / `ESC 5`) *[possibly deprecated?]*
   - Toggle underline (`ESC -`)
 - GS Commands:
   - Select character size

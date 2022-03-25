@@ -2,9 +2,9 @@
 using ReceiptPrinterEmulator.Emulator.Abstraction;
 using ReceiptPrinterEmulator.Emulator.Enums;
 
-namespace ReceiptPrinterEmulator.Emulator;
+namespace ReceiptPrinterEmulator.Emulator.Printables;
 
-public class ReceiptLine : IReceiptPrintable
+public class ReceiptTextLine : IReceiptPrintable
 {
     private readonly PaperConfiguration.FontConfiguration _font;
     private readonly int _printWidth;
@@ -20,7 +20,7 @@ public class ReceiptLine : IReceiptPrintable
 
     public bool IsEmpty => string.IsNullOrEmpty(_text);
     
-    public ReceiptLine(PaperConfiguration paperConfiguration, PrintMode printMode)
+    public ReceiptTextLine(PaperConfiguration paperConfiguration, PrintMode printMode)
     {
         _font = paperConfiguration.GetFont(printMode.Font);
         _printWidth = paperConfiguration.GetPrintWidthInPixels();

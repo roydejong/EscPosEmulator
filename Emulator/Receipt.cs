@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using ReceiptPrinterEmulator.Emulator.Abstraction;
+using ReceiptPrinterEmulator.Emulator.Printables;
 
 namespace ReceiptPrinterEmulator.Emulator;
 
@@ -18,11 +19,12 @@ public class Receipt
 
     private PrintMode _printMode;
     private List<IReceiptPrintable> _renderLines;
-    private ReceiptLine? _currentTextLine;
+    private ReceiptTextLine? _currentTextLine;
+    private int _lineSpacing;
 
     public bool IsEmpty => (_currentTextLine == null || _currentTextLine.IsEmpty) && _renderLines.Count == 0;
 
-    public Receipt(PaperConfiguration paperConfiguration, PrintMode printMode)
+    public Receipt(PaperConfiguration paperConfiguration, PrintMode printMode, int lineSpacing)
     {
         Guid = System.Guid.NewGuid().ToString();
         
@@ -31,16 +33,22 @@ public class Receipt
         _printMode = printMode;
         _renderLines = new();
         _currentTextLine = null;
+        _lineSpacing = lineSpacing;
     }
 
     public void ChangeFontConfiguration(PrintMode printMode)
     {
-        FinalizeTextLine();
+        FinalizeTextLine(false);
 
         _printMode = printMode.Clone();
     }
 
-    private ReceiptLine CreateNewTextLine() => new(_paperConfiguration, _printMode);
+    public void SetLineSpacing(int value)
+    {
+        _lineSpacing = value;
+    }
+
+    private ReceiptTextLine CreateNewTextLine() => new(_paperConfiguration, _printMode);
     
     public void PrintText(string text)
     {
@@ -53,7 +61,7 @@ public class Receipt
 
             if (!canContinue)
             {
-                FinalizeTextLine();
+                FinalizeTextLine(false);
 
                 _currentTextLine = CreateNewTextLine();
                 canContinue = _currentTextLine.TryWriteChar(text[i]);
@@ -64,21 +72,18 @@ public class Receipt
         }
     }
 
-    public void FinalizeTextLine(bool forceNewLine = false)
+    public void FinalizeTextLine(bool insertLineSpacing)
     {
-        if (_currentTextLine == null || _currentTextLine.IsEmpty)
+        if (_currentTextLine != null && !_currentTextLine.IsEmpty)
         {
-            if (forceNewLine)
-            {
-                _currentTextLine = CreateNewTextLine();
-                _currentTextLine.TryWriteChar(' ');
-                FinalizeTextLine(false);
-            }
-            return;
+            _renderLines.Add(_currentTextLine);
+            _currentTextLine = null;
         }
 
-        _renderLines.Add(_currentTextLine);
-        _currentTextLine = null;
+        if (insertLineSpacing)
+        {
+            _renderLines.Add(new ReceiptEmptyLine(_lineSpacing));
+        }
     }
 
     public void AdvanceToNewLine() => FinalizeTextLine(true);

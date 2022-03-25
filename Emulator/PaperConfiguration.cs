@@ -13,6 +13,7 @@ public class PaperConfiguration
     public double DotsPerInch = 180;
     public double PaperWidthMm = 80;
     public double PrintWidthMm = 72;
+    public int DefaultLineSpacing = 10;
 
     public Dictionary<PrinterFont, FontConfiguration> _printerFonts = new()
     {

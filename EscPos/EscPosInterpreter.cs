@@ -47,6 +47,8 @@ public class EscPosInterpreter
         RegisterCommand(new ItalicOnCommand());
         RegisterCommand(new SelectFontCommand());
         RegisterCommand(new SelectJustificationCommand());
+        RegisterCommand(new SetDefaultLineSpacingCommand());
+        RegisterCommand(new SetLineSpacingCommand());
         RegisterCommand(new ToggleEmphasizeCommand());
         RegisterCommand(new ToggleUnderlineCommand());
         
