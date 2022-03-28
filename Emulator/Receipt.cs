@@ -74,9 +74,10 @@ public class Receipt
 
     public void FinalizeTextLine(bool insertLineSpacing)
     {
-        if (_currentTextLine != null && !_currentTextLine.IsEmpty)
+        if (_currentTextLine != null)
         {
-            _renderLines.Add(_currentTextLine);
+            if (!_currentTextLine.IsEmpty)
+                _renderLines.Add(_currentTextLine);
             _currentTextLine = null;
         }
 
