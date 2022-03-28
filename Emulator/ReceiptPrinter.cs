@@ -80,6 +80,8 @@ public class ReceiptPrinter
 
     public void Initialize()
     {
+        _escPosInterpreter.ClearBuffers();
+    
         SelectFont(PrinterFont.FontA);
         SelectJustification(TextJustification.Left);
         SelectCharacterSize(1, 1);

@@ -74,6 +74,12 @@ public class EscPosInterpreter
 
     #region Buffers
 
+    public void ClearBuffers()
+    {
+        FinalizePrintBuffer();
+        FinalizeCommandBuffer();
+    }
+    
     private string FinalizePrintBuffer()
     {
         var result = _printBuffer.ToString();
