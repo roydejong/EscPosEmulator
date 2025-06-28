@@ -21,6 +21,7 @@ public class Receipt
     private List<IReceiptPrintable> _renderLines;
     private ReceiptTextLine? _currentTextLine;
     private int _lineSpacing;
+    private int _tabSpacing;
 
     public bool IsEmpty => (_currentTextLine == null || _currentTextLine.IsEmpty) && _renderLines.Count == 0;
 
@@ -34,11 +35,12 @@ public class Receipt
         _renderLines = new();
         _currentTextLine = null;
         _lineSpacing = lineSpacing;
+        _tabSpacing = paperConfiguration.DefaultTabSpacing;
     }
 
     public void ChangeFontConfiguration(PrintMode printMode)
     {
-        FinalizeTextLine(false);
+       // FinalizeTextLine(false);
 
         _printMode = printMode.Clone();
     }
@@ -48,23 +50,28 @@ public class Receipt
         _lineSpacing = value;
     }
 
+    public void SetTabSpacing(int value)
+    {
+        _tabSpacing = value;
+    }
+
     private ReceiptTextLine CreateNewTextLine() => new(_paperConfiguration, _printMode);
     
-    public void PrintText(string text)
+    public void PrintText(string text,PrintMode printMode)
     {
         if (_currentTextLine is null)
             _currentTextLine = CreateNewTextLine();
 
         for (var i = 0; i < text.Length; i++)
         {
-            var canContinue = _currentTextLine.TryWriteChar(text[i]);
+            var canContinue = _currentTextLine.TryWriteChar(text[i],printMode);
 
             if (!canContinue)
             {
                 FinalizeTextLine(false);
 
                 _currentTextLine = CreateNewTextLine();
-                canContinue = _currentTextLine.TryWriteChar(text[i]);
+                canContinue = _currentTextLine.TryWriteChar(text[i],printMode);
 
                 if (!canContinue)
                     throw new Exception("Logic error - line must be able to contain > 0 chars");

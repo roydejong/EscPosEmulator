@@ -14,7 +14,8 @@
             <StackPanel Margin="15 10" VerticalAlignment="Center">
                 <TextBlock Text="!Status!" Foreground="White" Name="Address" FontWeight="Bold" Margin="0 0 0 10"/>
                 <Button Name="ResetButton" Click="ResetButton_OnClick" Padding="5 3" Margin="0 0 0 10">Reset</Button>    
-                <Button Name="TestButton" Click="TestButton_OnClick" Padding="5 3" Margin="0 0 0 10">Test print</Button>    
+                <Button Name="TestButton" Click="TestButton_OnClick" Padding="5 3" Margin="0 0 0 10">Test print</Button>
+                <Button Name="ShowButton" Click="ShowButton_OnClick" Padding="5 3" Margin="0 0 0 10">Hex Dump Test Ticket</Button>
             </StackPanel>
         </Grid>
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" Name="MainScrollView">

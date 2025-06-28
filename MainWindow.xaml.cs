@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -50,6 +51,26 @@ namespace ReceiptPrinterEmulator
             toRemove.ForEach(img => ReceiptImageRoot.Children.Remove(img));
 
             RefreshUI();
+        }
+
+        private void ShowButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var path = "test_receipt.txt";
+            if (!File.Exists(path))
+            {
+                Console.WriteLine("File not found.");
+                return;
+            }
+
+            byte[] data = File.ReadAllBytes(path);
+            var sb = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                sb.AppendFormat("{0:X2} ", data[i]);
+                if ((i + 1) % 16 == 0)
+                    sb.AppendLine();
+            }
+            Console.WriteLine(sb.ToString());
         }
 
         private void TestButton_OnClick(object sender, RoutedEventArgs e)
