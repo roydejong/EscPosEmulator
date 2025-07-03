@@ -4,6 +4,7 @@ using System.Text;
 using ReceiptPrinterEmulator.Emulator;
 using ReceiptPrinterEmulator.EscPos.Commands.ESC;
 using ReceiptPrinterEmulator.EscPos.Commands.GS;
+using ReceiptPrinterEmulator.EscPos.Commands.FS;
 using ReceiptPrinterEmulator.Logging;
 
 namespace ReceiptPrinterEmulator.EscPos;
@@ -41,20 +42,32 @@ public class EscPosInterpreter
 
     private void RegisterCommands()
     {
-        // ESC
+        // ESC = 0x1B
         RegisterCommand(new InitializePrinterCommand());
         RegisterCommand(new ItalicOffCommand());
         RegisterCommand(new ItalicOnCommand());
         RegisterCommand(new SelectFontCommand());
+        RegisterCommand(new SelectCharsetCommand());
+        RegisterCommand(new SelectCharTableCommand()); 
         RegisterCommand(new SelectJustificationCommand());
         RegisterCommand(new SetDefaultLineSpacingCommand());
         RegisterCommand(new SetLineSpacingCommand());
         RegisterCommand(new ToggleEmphasizeCommand());
         RegisterCommand(new ToggleUnderlineCommand());
+        RegisterCommand(new SetPrintTextMode()); // 0x1B, 0x21, n
+        RegisterCommand(new PaperFullCut()); // 0x1B, 0x6D
+        RegisterCommand(new PaperPartialCut()); // 0x1B, 0x69
+        RegisterCommand(new PaperPrintFeednLines()); // 0x1B, 0x64
+        RegisterCommand(new PaperPrintFeed()); // 0x1B, 0x4A
         
-        // GS
+        // FS = 0x1C
+        RegisterCommand(new PrintStoredLogo()); // 0x1C, 0x70, n, m
+        RegisterCommand(new PaperAutoCut()); // 0x1C, 0x7D, 0x60, n
+        
+        // GS = 0x1D
         RegisterCommand(new SelectCharacterSizeCommand());
         RegisterCommand(new SelectCutModeAndCutCommand());
+        RegisterCommand(new PaperEjectCommand()); // 0x1D, 0x65, n, [m, t]
     }
 
     private void RegisterCommand(BaseCommand command)
@@ -135,7 +148,14 @@ public class EscPosInterpreter
                 var commandText = _commandBuffer.ToString();
 
                 if (commandText.Length > _maxCommandPrefixLength)
-                    throw new InvalidOperationException($"Invalid or unsupported command encountered: {commandText}");
+                {
+                	string byteText;
+                	
+                	if (i > 0) byteText = string.Format("0x{0:X2} 0x{1:X2}", (int)ascii[i - 1], (int)ascii[i]);
+                	else byteText = string.Format("0x{0:X2}", (int)ascii[i]);
+                	
+                	throw new InvalidOperationException("Invalid or unsupported command encountered: " + byteText);
+                }
 
                 if (_commandRegistry.ContainsKey(commandText))
                 {
@@ -174,7 +194,7 @@ public class EscPosInterpreter
             if (currentChar == HT)
             {
                 // Horizontal tab
-                throw new NotImplementedException("Not implemented: Horizontal tab");
+                _printer.PrintTab();
             }
 
             if (currentChar == LF || currentChar == CR)
@@ -187,7 +207,8 @@ public class EscPosInterpreter
             if (currentChar == FF)
             {
                 // Print and return to Standard mode (in Page mode)
-                throw new NotImplementedException("Not supported: page mode");
+                //throw new NotImplementedException("Not supported: page mode");
+                continue;
             }
 
             if (currentChar == DLE)
@@ -205,6 +226,7 @@ public class EscPosInterpreter
             if (currentChar == ESC || currentChar == FS || currentChar == GS)
             {
                 // ESC, FS and GS commands - begin command mode
+                _printer.PrintText(FinalizePrintBuffer());
                 _interpretingCommandPrefix = true;
 
                 _commandBuffer.Clear();
@@ -227,12 +249,12 @@ public class EscPosInterpreter
 
     public static readonly char NUL = Convert.ToChar(0);
     public static readonly char HT = Convert.ToChar(9);
-    public static readonly char LF = Convert.ToChar(10);
-    public static readonly char FF = Convert.ToChar(12);
-    public static readonly char CR = Convert.ToChar(13);
-    public static readonly char DLE = Convert.ToChar(16);
-    public static readonly char CAN = Convert.ToChar(24);
-    public static readonly char ESC = Convert.ToChar(27);
-    public static readonly char FS = Convert.ToChar(28);
-    public static readonly char GS = Convert.ToChar(29);
+    public static readonly char LF = Convert.ToChar(10);  // 0x0A
+    public static readonly char FF = Convert.ToChar(12);  // 0x0C
+    public static readonly char CR = Convert.ToChar(13);  // 0x0D
+    public static readonly char DLE = Convert.ToChar(16); // 0x10
+    public static readonly char CAN = Convert.ToChar(24); // 0x18
+    public static readonly char ESC = Convert.ToChar(27); // 0x1B
+    public static readonly char FS = Convert.ToChar(28);  // 0x1C
+    public static readonly char GS = Convert.ToChar(29);  // 0x1D
 }

@@ -12,9 +12,10 @@ public class ReceiptPrinter
 {
     private readonly PaperConfiguration _paperConfiguration;
     private readonly EscPosInterpreter _escPosInterpreter;
-
+    
     private PrintMode _printMode;
     private int _lineSpacing;
+    private int _tabSpacing;
     
     public Receipt CurrentReceipt { get; private set; }
     public List<Receipt> ReceiptStack { get; private set; }
@@ -39,11 +40,17 @@ public class ReceiptPrinter
 
     public void FeedEscPos(string ascii)
     {
+        if (ascii.Length>10000)
+        {
+            File.WriteAllText("last_ticket.bin", ascii, Encoding.ASCII);
+        }
         File.WriteAllText("last_escpos_receive.txt", ascii, Encoding.ASCII);
 
         try
         {
+            Logger.Info($"Received: {ascii}");
             _escPosInterpreter.Interpret(ascii);
+            
         }
         catch (Exception ex)
         {
@@ -89,13 +96,14 @@ public class ReceiptPrinter
         SelectItalicMode(false);
         SelectUnderlineMode(UnderlineMode.Off);
         SetDefaultLineSpacing();
+        SetDefaultTabSpacing();
     }
 
     public void PrintText(string text)
     {
         Logger.Info($"Print: {text}");
         
-        CurrentReceipt.PrintText(text);
+        CurrentReceipt.PrintText(text,_printMode);
     }
 
     public void Cut(CutFunction cutFunction = CutFunction.Cut, CutShape cutShape = CutShape.Full, int n = 0)
@@ -178,7 +186,16 @@ public class ReceiptPrinter
         CurrentReceipt.SetLineSpacing(_lineSpacing);
     }
 
+    public void SetTabSpacing(int value)
+    {
+        Logger.Info($"Set tab spacing: {value}");
+
+        _tabSpacing = value;
+        CurrentReceipt.SetTabSpacing(_tabSpacing);
+    }
+
     public void SetDefaultLineSpacing() => SetLineSpacing(_paperConfiguration.DefaultLineSpacing);
+    public void SetDefaultTabSpacing() => SetTabSpacing(_paperConfiguration.DefaultTabSpacing);
     
     #endregion
 
@@ -191,6 +208,14 @@ public class ReceiptPrinter
     {
         PrintText(printBuffer);
         LineFeed();
+    }
+
+    public void PrintTab()
+    {
+    		string tabs = "";
+    		
+    		for (var i = 0; i < _tabSpacing; i++) tabs += " ";
+        PrintText(tabs);
     }
 
     #endregion

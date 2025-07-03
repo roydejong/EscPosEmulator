@@ -13,7 +13,7 @@ namespace ReceiptPrinterEmulator
         {
             Printer = new ReceiptPrinter(PaperConfiguration.Default);
 
-            Server = new NetServer(1234);
+            Server = new NetServer(9100);
             _ = Server.Run();
         }
 

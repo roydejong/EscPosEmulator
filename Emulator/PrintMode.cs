@@ -1,4 +1,5 @@
 ﻿using ReceiptPrinterEmulator.Emulator.Enums;
+using System;
 
 namespace ReceiptPrinterEmulator.Emulator;
 
@@ -28,5 +29,26 @@ public class PrintMode
         CharWidthScale = 1;
         CharHeightScale = 1;
         Justification = TextJustification.Left;
+    }
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(this, obj))
+            return true;
+        if (obj is null || obj.GetType() != GetType())
+            return false;
+
+        var other = (PrintMode)obj;
+        return Font == other.Font
+            && CharWidthScale == other.CharWidthScale
+            && CharHeightScale == other.CharHeightScale
+            && Justification == other.Justification
+            && Emphasize == other.Emphasize
+            && Italic == other.Italic
+            && Underline == other.Underline;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Font, CharWidthScale, CharHeightScale, Justification, Emphasize, Italic, Underline);
     }
 }
