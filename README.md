@@ -40,6 +40,7 @@
   - Select character size
   - Select cut mode and cut paper
   - Paper eject (`GS e n [m t]`)
+  - Print raster image (`GS v 0 [m xL xH yL yH ...pixels]`)
 
 ### Example
 

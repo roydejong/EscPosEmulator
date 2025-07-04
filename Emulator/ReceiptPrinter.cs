@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using ReceiptPrinterEmulator.Emulator.Enums;
@@ -196,7 +197,14 @@ public class ReceiptPrinter
 
     public void SetDefaultLineSpacing() => SetLineSpacing(_paperConfiguration.DefaultLineSpacing);
     public void SetDefaultTabSpacing() => SetTabSpacing(_paperConfiguration.DefaultTabSpacing);
-    
+
+    public void PrintBitmap(Bitmap bitmap)
+    {
+        Logger.Info($"Print bitmap: {bitmap.Width}x{bitmap.Height}");
+        
+        CurrentReceipt.PrintBitmap(bitmap);
+    }
+
     #endregion
 
     #region Command API

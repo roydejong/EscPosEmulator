@@ -96,6 +96,13 @@ public class Receipt
 
     public void AdvanceToNewLine() => FinalizeTextLine(true);
 
+    public void PrintBitmap(Bitmap image)
+    {
+        FinalizeTextLine(false);
+
+        _renderLines.Add(new ReceiptBitmapLine(_paperConfiguration, image));
+    }
+
     public int GetTotalPrintHeight()
         => _renderLines.Sum(line => line.GetPrintHeight());
 

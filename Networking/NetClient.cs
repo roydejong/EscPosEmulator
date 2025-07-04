@@ -42,7 +42,7 @@ public class NetClient
     {
         try
         {
-            var receiveBuffer = GC.AllocateArray<byte>(1024, true);
+            var receiveBuffer = GC.AllocateArray<byte>(1024000, true);
             var bufferMemory = receiveBuffer.AsMemory();
 
             while (!_lifetimeCts.Token.IsCancellationRequested)
@@ -68,5 +68,5 @@ public class NetClient
     }
 
     private static void HandleIncomingData(ReadOnlySpan<byte> data) =>
-        App.Printer?.FeedEscPos(Encoding.ASCII.GetString(data));
+        App.Printer?.FeedEscPos(Encoding.Latin1.GetString(data));
 }
