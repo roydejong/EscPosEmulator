@@ -68,6 +68,7 @@ public class EscPosInterpreter
         RegisterCommand(new SelectCharacterSizeCommand());
         RegisterCommand(new SelectCutModeAndCutCommand());
         RegisterCommand(new PaperEjectCommand()); // 0x1D, 0x65, n, [m, t]
+        RegisterCommand(new PrintRasterBitImageCommand());
     }
 
     private void RegisterCommand(BaseCommand command)
@@ -128,7 +129,7 @@ public class EscPosInterpreter
                 {
                     var finalArgs = FinalizeCommandBuffer();
 
-                    Logger.Info($"Execute [{_activeCommand.GetType().Name}] with args [{finalArgs}]");
+                    Logger.Info($"Execute [{_activeCommand.GetType().Name}] with args [{(finalArgs.Length > 8 ? $"{finalArgs[..8]}..." : finalArgs)}]");
 
                     _activeCommand.Execute(_printer, finalArgs);
                     _activeCommand = null;
